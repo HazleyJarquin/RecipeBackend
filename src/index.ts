@@ -43,14 +43,13 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
-// Ruta para los archivos estáticos de Swagger
+// Ruta para servir los archivos estáticos de Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Ruta para servir archivos estáticos de Swagger UI directamente desde el paquete
 app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customJs: "/swagger-ui-init.js",
-  })
+  "/swagger-ui",
+  express.static(path.join(require.resolve("swagger-ui-dist"), ".."))
 );
 
 // Conectar a la base de datos
