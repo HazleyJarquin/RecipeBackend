@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes";
 
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
 
 // Configurar variables de entorno
 dotenv.config();
@@ -30,7 +31,10 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${PORT}`,
+        url:
+          process.env.NODE_ENV === "production"
+            ? "https://recipe-backend-seven.vercel.app"
+            : `http://localhost:${PORT}`,
       },
     ],
   },
@@ -39,9 +43,15 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
-console.log(swaggerSpec);
-// Rutas de Swagger
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Ruta para los archivos estáticos de Swagger
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customJs: "/swagger-ui-init.js",
+  })
+);
 
 // Conectar a la base de datos
 connectDB();
